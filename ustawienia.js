@@ -26,7 +26,7 @@ window.USTAWIENIA_AR = {
   // beta — przyspieszanie reakcji przy ruchu telefonu.
   //   Większa = mniejsze opóźnienie, ale przepuszcza drgania.
   //   Domyślnie w MindAR: 1000    Przykłady: 100, 10
-  beta: 1000,
+  beta: 10,
 
   // ---------- POJAWIANIE SIĘ / ZNIKANIE MODELU ----------
   // Ile kolejnych klatek znacznik musi być widoczny, zanim pojawi się model.
