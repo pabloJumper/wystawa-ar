@@ -1,0 +1,4 @@
+Tytuł: Akademia Muzyczna w Poznaniu
+Autor: WXCA
+Opis: Budynek akademii podzielono na bryły odpowiadające skali zabudowy miejskiej.
+Szerokość znacznika: 100 m
