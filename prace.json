@@ -4,12 +4,12 @@
     {
       "id": "tygrys",
       "tytul": "Tygrys",
-      "autor": "Imię Nazwisko",
+      "autor": "Tygrys z Łazarza",
       "opis": "Przykładowa praca — model testowy.",
-      "model": "prace/tygrys/model.glb",
-      "znacznik": "prace/tygrys/znacznik.png",
+      "model": "prace/tygrys/tygrys.glb",
+      "znacznik": "prace/tygrys/tygrys.png",
       "mind": "prace/tygrys/znacznik.mind",
-      "szerokoscZnacznika": 4.2,
+      "szerokoscZnacznika": 4,
       "srodekZnacznika": [0, 0],
       "obrot": 0
     },
