@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AR — wystawa</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; font-family: system-ui, sans-serif; }
+    #info { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 12px 16px;
+            background: rgba(0,0,0,.55); color: #fff; font-size: 14px; }
+    #info b { font-size: 16px; }
+    #info a { color: #fff; }
+  </style>
+</head>
+<body>
+  <div id="info">Ładowanie…</div>
+  <script type="module">
+    import { wczytajPrace, znajdzPrace, htmlModelu, SWIATLA } from './wspolne.js';
+
+    const info = document.getElementById('info');
+    try {
+      const dane = await wczytajPrace();
+      const id = new URLSearchParams(location.search).get('p');
+      const praca = znajdzPrace(dane, id);
+      document.title = `${praca.tytul} — AR`;
+      info.innerHTML = `<b>${praca.tytul}</b> · ${praca.autor}<br>Skieruj aparat na znacznik. <a href="./">Wszystkie prace</a>`;
+
+      document.body.insertAdjacentHTML('beforeend', `
+        <a-scene mindar-image="imageTargetSrc: ${praca.mind}; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 5; warmupTolerance: 5"
+                 renderer="colorManagement: true; antialias: true"
+                 color-space="sRGB" vr-mode-ui="enabled: false"
+                 device-orientation-permission-ui="enabled: false"
+                 light="defaultLightsEnabled: false">
+          <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+          <a-entity mindar-image-target="targetIndex: 0">
+            ${SWIATLA}
+            ${htmlModelu(praca)}
+          </a-entity>
+        </a-scene>`);
+    } catch (e) {
+      info.textContent = 'Błąd: ' + e.message;
+    }
+  </script>
+</body>
+</html>

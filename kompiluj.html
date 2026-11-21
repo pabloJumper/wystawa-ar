@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kompilator znaczników</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 24px 16px; background: #f6f5f2; color: #222; }
+    #postep { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+  <h1>Kompilator znaczników (.mind)</h1>
+  <p>Wybierz obrazek znacznika (PNG/JPG). Po kompilacji pobierze się plik <code>znacznik.mind</code> —
+     wrzuć go do folderu pracy, obok <code>znacznik.png</code>.</p>
+  <input type="file" id="plik" accept="image/*">
+  <p id="postep"></p>
+  <p><a href="./">← wszystkie prace</a></p>
+
+  <script type="module">
+    import { Compiler } from 'https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image.prod.js';
+
+    // Zwraca bajty pliku .mind dla podanego adresu/obrazka
+    async function kompiluj(src, onProgress) {
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      const compiler = new Compiler();
+      await compiler.compileImageTargets([img], onProgress);
+      return compiler.exportData();
+    }
+    window.kompiluj = kompiluj;
+
+    const postep = document.getElementById('postep');
+
+    // Tryb lokalny: kompiluj.html?auto=prace/x/znacznik.png — kompiluje i zapisuje przez lokalny serwer (PUT)
+    const auto = new URLSearchParams(location.search).get('auto');
+    if (auto && location.hostname === 'localhost') {
+      postep.textContent = 'Kompilacja ' + auto + '…';
+      const dane = await kompiluj(auto, (p) => postep.textContent = `Kompilacja ${auto}: ${p.toFixed(0)}%`);
+      const cel = auto.replace(/\.[^.]+$/, '.mind');
+      const r = await fetch(cel, { method: 'PUT', body: dane });
+      postep.textContent = r.ok ? `Zapisano ${cel} (${dane.byteLength} B). Możesz zamknąć kartę.` : 'Błąd zapisu: ' + r.status;
+    }
+    document.getElementById('plik').onchange = async (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      postep.textContent = 'Kompilacja…';
+      const dane = await kompiluj(URL.createObjectURL(f), (p) => postep.textContent = `Kompilacja: ${p.toFixed(0)}%`);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([dane]));
+      a.download = 'znacznik.mind';
+      a.click();
+      postep.textContent = 'Gotowe — plik znacznik.mind został pobrany.';
+    };
+  </script>
+</body>
+</html>

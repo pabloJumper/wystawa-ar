@@ -1,0 +1,17 @@
+{
+  "tytulWystawy": "Wystawa prac studenckich",
+  "prace": [
+    {
+      "id": "tygrys",
+      "tytul": "Tygrys",
+      "autor": "Imię Nazwisko",
+      "opis": "Przykładowa praca — model testowy.",
+      "model": "prace/tygrys/model.glb",
+      "znacznik": "prace/tygrys/znacznik.png",
+      "mind": "prace/tygrys/znacznik.mind",
+      "szerokoscZnacznika": 4.2,
+      "srodekZnacznika": [0, 0],
+      "obrot": 0
+    }
+  ]
+}

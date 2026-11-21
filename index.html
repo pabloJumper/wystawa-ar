@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wystawa AR</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px 16px; background: #f6f5f2; color: #222; }
+    .prace { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .praca { background: #fff; border-radius: 10px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+    .praca img.zn { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fafafa; border-radius: 6px; }
+    .praca h2 { margin: 10px 0 2px; font-size: 18px; }
+    .praca p { margin: 4px 0; color: #555; font-size: 14px; }
+    .akcje { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+    .akcje a { padding: 6px 10px; border-radius: 6px; background: #222; color: #fff; text-decoration: none; font-size: 14px; }
+    .akcje a.drugi { background: #ddd; color: #222; }
+    .qr { margin-top: 10px; }
+    footer { margin-top: 32px; font-size: 13px; color: #777; }
+  </style>
+</head>
+<body>
+  <h1 id="tytul">Wystawa AR</h1>
+  <p>Otwórz pracę na telefonie i skieruj aparat na znacznik przy eksponacie.</p>
+  <div class="prace" id="prace"></div>
+  <footer><a href="kompiluj.html">Kompilator znaczników</a></footer>
+
+  <script type="module">
+    import { wczytajPrace } from './wspolne.js';
+    const dane = await wczytajPrace();
+    document.getElementById('tytul').textContent = dane.tytulWystawy;
+    const kontener = document.getElementById('prace');
+    for (const p of dane.prace) {
+      const url = new URL(`ar.html?p=${encodeURIComponent(p.id)}`, location.href).href;
+      const el = document.createElement('div');
+      el.className = 'praca';
+      el.innerHTML = `
+        <img class="zn" src="${p.znacznik}" alt="Znacznik: ${p.tytul}" loading="lazy">
+        <h2>${p.tytul}</h2>
+        <p>${p.autor}</p>
+        <p>${p.opis || ''}</p>
+        <div class="akcje">
+          <a href="${url}">Otwórz AR</a>
+          <a class="drugi" href="kalibracja.html?p=${encodeURIComponent(p.id)}">Kalibracja skali</a>
+        </div>
+        <div class="qr" title="${url}"></div>`;
+      kontener.appendChild(el);
+      new QRCode(el.querySelector('.qr'), { text: url, width: 110, height: 110 });
+    }
+  </script>
+</body>
+</html>
