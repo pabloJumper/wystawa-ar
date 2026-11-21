@@ -22,7 +22,7 @@
       "znacznik": "prace/ampp/ampp.png",
       "mind": "prace/ampp/znacznik.mind",
       "szerokoscZnacznika": 100,
-      "srodekZnacznika": [5, 0],
+      "srodekZnacznika": [-5, 0],
       "obrot": 0
     }
   ]
