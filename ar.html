@@ -8,15 +8,16 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <script>
     // MindAR prosi o kamerę bez rozdzielczości — przeglądarki dają wtedy 640×480 (rozmazany obraz).
-    // Prosimy o HD i ciągły autofokus. Wyższa rozdzielczość = ostrzejszy obraz, ale wolniejsze śledzenie,
-    // dlatego 1280×720 (kompromis). Przeglądarka pomija ustawienia, których telefon nie obsługuje.
+    // Prosimy o Full HD i ciągły autofokus. Wyższa rozdzielczość = ostrzejszy obraz, ale wolniejsze śledzenie —
+    // jeśli na słabszych telefonach model drga lub się spóźnia, wróć do 1280×720.
+    // Przeglądarka pomija ustawienia, których telefon nie obsługuje.
     (() => {
       const md = navigator.mediaDevices;
       if (!md || !md.getUserMedia) return;
       const oryginal = md.getUserMedia.bind(md);
       md.getUserMedia = (c) => {
         if (c && c.video && typeof c.video === 'object') {
-          c = { ...c, video: { ...c.video, width: { ideal: 1280 }, height: { ideal: 720 },
+          c = { ...c, video: { ...c.video, width: { ideal: 1920 }, height: { ideal: 1080 },
                                advanced: [{ focusMode: 'continuous' }] } };
         }
         return oryginal(c);
