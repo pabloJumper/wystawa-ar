@@ -194,4 +194,5 @@ Do adresu `ar.html?p=<nazwa>` można dopisać parametry:
 | `&cf=0.0005` | 0.001 | mniejsza wartość = mniej drgań modelu |
 | `&beta=500` | 1000 | większa wartość = mniejsze opóźnienie przy szybkim ruchu |
 
-Np. `ar.html?p=tygrys&kamera=480&cf=0.0005`. Gdy znajdziesz najlepsze ustawienia, można je wpisać na stałe.
+Np. `ar.html?p=tygrys&kamera=480&cf=0.0005`. Gdy znajdziesz najlepsze ustawienia,
+wpisz je na stałe w pliku **`ustawienia.js`** — są tam wszystkie parametry AR z opisami.
