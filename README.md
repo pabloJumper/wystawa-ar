@@ -1,8 +1,10 @@
 # Wystawa AR — instrukcja dla studentów
 
-Twój model 3D pojawi się w rozszerzonej rzeczywistości (AR) na wydrukowanym znaczniku.
-Zwiedzający skanuje kod QR telefonem, kieruje aparat na znacznik i widzi model stojący
-dokładnie na rysunku: w tej samej skali i położeniu.
+Na wystawie wisi lub leży Twój **rzut charakterystyczny w skali 1:200** (np. rzut parteru).
+Zwiedzający skanuje kod QR telefonem, kieruje aparat na rzut i widzi nad nim **model 3D budynku**
+stojący dokładnie na rysunku: ściany modelu pokrywają się ze ścianami na rzucie.
+
+Wydrukowany rzut jest jednocześnie **znacznikiem AR**: telefon rozpoznaje go po rysunku.
 
 Strona wystawy: **https://pablojumper.github.io/wystawa-ar/**
 
@@ -15,8 +17,8 @@ Folder nazwany swoim nazwiskiem i tytułem pracy, bez polskich znaków i spacji
 
 | Plik | Co to jest |
 |---|---|
-| `model.glb` | model 3D, **maks. 15 MB** |
-| `znacznik.png` | rzut z góry modelu, kwadrat, ok. 2000 × 2000 px |
+| `model.glb` | model 3D budynku, **maks. 15 MB** |
+| `znacznik.png` | rzut 1:200 dokładnie w obszarze kwadratu (krok 2), ok. 2000–3000 px |
 | `opis.txt` | dane pracy (wzór niżej) |
 
 Wzór `opis.txt`:
@@ -25,66 +27,113 @@ Wzór `opis.txt`:
 Tytuł: Pawilon nad wodą
 Autor: Jan Kowalski
 Opis: Jedno-dwa zdania o projekcie.
-Szerokość znacznika: 6 m
+Szerokość znacznika: 60 m
 ```
 
 ---
 
-## Krok 1. Ustaw model w Rhino
+## Krok 1. Kwadrat znacznika w modelu
 
-1. Jednostki pliku: **metry** (`Units` → Meters).
-2. Przesuń model tak, aby **środek rzutu był w punkcie 0,0**, a **parter na wysokości Z = 0**.
-3. Narysuj wokół modelu **kwadrat** o okrągłym wymiarze (np. 6 × 6 m), ze środkiem w 0,0.
-   Model musi się zmieścić w kwadracie. Zapisz ten wymiar — to **szerokość znacznika**.
+1. Jednostki pliku: **metry**.
+2. Ustaw model tak, by **poziom parteru był na Z = 0**. Rzut i model muszą mieć **te same współrzędne**:
+   nie przesuwaj ani nie obracaj jednego względem drugiego.
+3. Narysuj **kwadrat** ze **środkiem w punkcie 0,0**, o okrągłym boku, który zmieści rzut
+   razem z otoczeniem i opisami. Bok kwadratu to **szerokość znacznika** — wpisz go do `opis.txt`.
 
-> Dlaczego to ważne: telefon dopasowuje model do znacznika właśnie według tego kwadratu.
-> Jeśli wymiar się nie zgadza, model w AR będzie za duży albo za mały.
+Bok kwadratu dobierz do wydruku 1:200:
 
-## Krok 2. Przygotuj znacznik (`znacznik.png`)
+| Bok kwadratu | Wydruk 1:200 | Czy działa |
+|---|---|---|
+| 20 m | 10 cm | ✗ za mały — telefon słabo śledzi |
+| 40 m | 20 cm | ✓ minimum |
+| 60 m | 30 cm | ✓ dobrze (zalecane) |
+| 80 m | 40 cm | ✓ dobrze |
+| 100 m | 50 cm | ✓ bardzo dobrze |
 
-1. Widok **Top**, rzut **równoległy (Parallel)**. Nie używaj perspektywy.
-2. Zapisz obraz dokładnie z obszaru kwadratu z kroku 1, np. przez `ViewCaptureToFile`
-   po wcześniejszym `Zoom` → `Window` na kwadrat albo przez render obszaru.
-   Obraz ma być kwadratowy, ok. 2000 × 2000 px.
-3. Góra obrazka = oś Y w Rhino (północ rysunku). Nie obracaj obrazka.
+Mały budynek? **Nie zmniejszaj kwadratu poniżej 40 m** — weź więcej otoczenia
+(działka, chodniki, zieleń, sąsiednie budynki).
 
-**Dobry znacznik ma dużo kontrastowych szczegółów na całej powierzchni:** linie, faktury,
-cienie, osie, opisy. Telefon śledzi właśnie te detale. Duże puste białe pola działają słabo —
-dodaj tło, siatkę, otoczenie lub tytuł pracy w wolnych miejscach kwadratu.
+## Krok 2. Rzut = znacznik
 
-## Krok 3. Wyeksportuj model (`model.glb`)
+Wszystko poniżej musi się znaleźć **wewnątrz kwadratu** z kroku 1:
 
-1. Zaznacz model (bez pomocniczego kwadratu) → `File` → `Export Selected` → format **.glb**.
-2. Sprawdź rozmiar pliku: **maks. 15 MB**. Telefon zwiedzającego pobiera go przez internet.
-   Jeśli plik jest większy:
+- **rzut charakterystyczny** (np. parter) w widoku z góry, w swoim miejscu względem modelu,
+- **podziałka liniowa** (np. 0–5–10 m) i napis **1:200**,
+- **nazwa projektu**,
+- **imię i nazwisko**,
+- strzałka północy (zalecana).
+
+Opisy umieść w wolnym miejscu kwadratu, np. w rogu, ale **nie na samym budynku**.
+
+### Jak sprawić, żeby telefon dobrze rozpoznawał rzut
+
+Telefon zamienia obraz na odcienie szarości i szuka w nim **kontrastowych detali**: narożników,
+krzyżujących się linii, faktur. Duże puste białe pola nie dają mu nic do śledzenia.
+
+- **Ściany przekrojone zaczernij** (poché) — mocny kontrast.
+- **Wypełnij wnętrza:** meble, posadzki (różne w różnych pomieszczeniach), schody, opisy pomieszczeń.
+- **Opracuj otoczenie:** nawierzchnie, trawa, drzewa z cieniami, chodniki, wymiarowanie.
+- **Unikaj pustych pól** i dużych jednolitych plam, także w rogach kwadratu.
+- Rysunek nie może wyglądać tak samo po obróceniu — rzuty budynków zwykle i tak są asymetryczne.
+
+Kolor jest dozwolony, ale liczy się **różnica jasności**: dwa kolory o podobnej jasności
+telefon widzi jako jedną plamę.
+
+### Zapis do pliku `znacznik.png`
+
+Plik musi obejmować **dokładnie kwadrat** — ani milimetra więcej, ani mniej:
+
+- Rhino: `Print` → Destination: **Raster / Image** → View and Output Scale: **Window** →
+  wskaż narożniki kwadratu z przyciąganiem **Osnap End** → rozmiar obrazu kwadratowy, np. 2500 × 2500 px.
+- Inny program (ArchiCAD, Revit, AutoCAD, Illustrator): narysuj ten sam kwadrat w rysunku
+  i wyeksportuj/przytnij obraz dokładnie do jego krawędzi. Sam kwadrat może zostać jako cienka ramka.
+
+Sprawdź plik w kompilatorze na stronie wystawy (**Kompilator znaczników**, link na dole strony):
+pokazuje zielone kropki w miejscach, które telefon rozpoznaje, i ocenę **dobry / średni / słaby**.
+Oddaj znacznik z oceną **dobry**. Obszary bez kropek dopracuj detalem.
+
+## Krok 3. Model (`model.glb`)
+
+1. Zaznacz model budynku (bez kwadratu i rysunku rzutu) → `File` → `Export Selected` → **.glb**.
+2. **Maks. 15 MB** — telefon zwiedzającego pobiera plik przez internet. Jeśli jest większy:
    - uprość siatki (`ReduceMesh`) albo zmniejsz gęstość siatki przy eksporcie,
-   - usuń niewidoczne elementy (wnętrza, śruby, detale niewidoczne z daleka),
+   - usuń elementy niewidoczne z zewnątrz (wnętrza, instalacje, drobne detale),
    - zmniejsz tekstury do 2048 px lub mniej.
-3. Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu z kroku 1.
+3. Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu.
 
-## Krok 4. Oddaj pracę
+## Krok 4. Wydruk w skali 1:200
 
-Wyślij folder (np. jako `.zip`) prowadzącemu. Twoja praca pojawi się na stronie wystawy.
+1. Bok wydruku = bok kwadratu / 200 (60 m → **30 cm**).
+2. Drukuj w **rozmiarze rzeczywistym (100%)**, nigdy „dopasuj do strony”.
+   Najprościej: `Print` w Rhino ze skalą 1:200 i tym samym oknem (narożniki kwadratu),
+   albo ustaw w programie graficznym rozmiar wydruku obrazka na np. 30 × 30 cm.
+3. **Sprawdź linijką** podziałkę lub bok kwadratu — drukarki potrafią zmniejszyć wydruk o kilka procent.
+   (Dla AR to nie problem, ale wtedy rzut nie jest już w skali 1:200.)
+4. Wydruk musi przedstawiać **ten sam rysunek, co `znacznik.png`**, w tym samym kadrze.
+   Może być w wyższej rozdzielczości lub wektorowo (PDF), ale bez zmian w treści.
+   Tytuł karty, marginesy, logo itp. dodawaj **poza kwadratem**.
+5. Papier **matowy**, najlepiej naklejony na sztywną płytę (forex, kapa) — znacznik musi być płaski.
+   Połysk i odbicia lamp przeszkadzają w rozpoznawaniu.
 
 ## Krok 5. Sprawdź swoją pracę na stronie
 
-1. Na stronie wystawy przy swojej pracy kliknij **Kalibracja skali** (na komputerze).
-   Półprzezroczysty model musi **dokładnie przykrywać rysunek** znacznika.
-   Przycisk **Perspektywa** pokazuje model z boku.
-2. Wydrukuj `znacznik.png`, otwórz stronę na telefonie, kliknij **Otwórz AR**,
-   zezwól na dostęp do aparatu i skieruj go na wydruk.
+Po dodaniu pracy przez prowadzącego:
 
-Rozmiar wydruku nie zmienia dopasowania, tylko skalę makiety:
-znacznik 6 m wydrukowany na 30 cm daje model w skali 1:20.
+1. Na stronie wystawy przy swojej pracy kliknij **Kalibracja skali** (na komputerze).
+   Półprzezroczysty model musi **dokładnie przykrywać ściany na rzucie**.
+   Przycisk **Perspektywa** pokazuje model z boku.
+2. Otwórz stronę na telefonie, kliknij **Otwórz AR**, zezwól na dostęp do aparatu
+   i skieruj go na wydruk z odległości ok. 30–60 cm.
 
 ### Coś nie działa?
 
 | Problem | Przyczyna |
 |---|---|
-| Model za duży / za mały | Podana szerokość znacznika nie zgadza się z kwadratem z kroku 1 |
-| Model przesunięty | Środek kwadratu nie był w punkcie 0,0 albo obraz nie obejmował dokładnie kwadratu |
-| Model obrócony | Obraz wykonany w innym widoku niż Top albo obrócony po zapisaniu |
-| Model „pływa” / znika | Za mało szczegółów na znaczniku, słabe światło albo błyszczący papier |
+| Model za duży / za mały | Podana szerokość znacznika nie zgadza się z bokiem kwadratu albo plik nie obejmuje dokładnie kwadratu |
+| Model przesunięty | Środek kwadratu nie był w punkcie 0,0 albo rzut przesunięto względem modelu |
+| Model obrócony | Rzut obrócony względem modelu albo obraz obrócony po zapisaniu |
+| Model „pływa” / znika | Za mało detalu na rzucie (ocena „słaby”), słabe światło, błyszczący papier, pofalowana kartka |
+| Telefon nie rozpoznaje wydruku | Wydruk różni się od `znacznik.png` (inny kadr, dorysowane elementy, inne kolory) |
 | Długo się wczytuje | Za duży `model.glb` |
 
 ---
@@ -94,7 +143,7 @@ znacznik 6 m wydrukowany na 30 cm daje model w skali 1:20.
 1. Utwórz folder `prace/<nazwa>/` i wrzuć `model.glb` oraz `znacznik.png`.
 2. Otwórz `kompiluj.html` na stronie wystawy, wybierz `znacznik.png`
    i zapisz pobrany plik jako `prace/<nazwa>/znacznik.mind`.
-3. Dopisz pracę w `prace.json`. `szerokoscZnacznika` to wymiar kwadratu w metrach.
+3. Dopisz pracę w `prace.json`: `szerokoscZnacznika` = bok kwadratu w metrach;
    `srodekZnacznika` i `obrot` zostaw jako `[0, 0]` i `0`.
 4. Wyślij zmiany:
    ```
