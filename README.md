@@ -1,67 +1,105 @@
-# Wystawa AR — prace studenckie
+# Wystawa AR — instrukcja dla studentów
 
-Strona z wystawą AR (MindAR + A-Frame), hostowana za darmo na GitHub Pages.
+Twój model 3D pojawi się w rozszerzonej rzeczywistości (AR) na wydrukowanym znaczniku.
+Zwiedzający skanuje kod QR telefonem, kieruje aparat na znacznik i widzi model stojący
+dokładnie na rysunku: w tej samej skali i położeniu.
+
+Strona wystawy: **https://pablojumper.github.io/wystawa-ar/**
+
+---
+
+## Co musisz oddać
+
+Folder nazwany swoim nazwiskiem i tytułem pracy, bez polskich znaków i spacji
+(np. `kowalski-pawilon`), a w nim:
+
+| Plik | Co to jest |
+|---|---|
+| `model.glb` | model 3D, **maks. 15 MB** |
+| `znacznik.png` | rzut z góry modelu, kwadrat, ok. 2000 × 2000 px |
+| `opis.txt` | dane pracy (wzór niżej) |
+
+Wzór `opis.txt`:
 
 ```
-wystawa-ar/
-├─ index.html        lista prac + kody QR do wydruku
-├─ ar.html           podgląd AR (ar.html?p=<id>)
-├─ kalibracja.html   sprawdzenie skali: model nałożony na znacznik, widok z góry
-├─ kompiluj.html     zamiana obrazka znacznika na plik .mind
-├─ prace.json        lista prac i ich ustawienia
-├─ wspolne.js        przeliczanie skali (wspólne dla AR i kalibracji)
-└─ prace/<id>/       model.glb, znacznik.png, znacznik.mind
+Tytuł: Pawilon nad wodą
+Autor: Jan Kowalski
+Opis: Jedno-dwa zdania o projekcie.
+Szerokość znacznika: 6 m
 ```
 
-## Jak działa skala (najważniejsze)
+---
 
-MindAR mierzy scenę w **szerokościach znacznika**: szerokość obrazka znacznika = 1,
-środek obrazka = (0, 0, 0), oś Z wychodzi z kartki. Dlatego wystarczy jedna liczba:
+## Krok 1. Ustaw model w Rhino
 
-> **`szerokoscZnacznika`** — ile jednostek modelu (np. metrów) obejmuje szerokość obrazka znacznika.
+1. Jednostki pliku: **metry** (`Units` → Meters).
+2. Przesuń model tak, aby **środek rzutu był w punkcie 0,0**, a **parter na wysokości Z = 0**.
+3. Narysuj wokół modelu **kwadrat** o okrągłym wymiarze (np. 6 × 6 m), ze środkiem w 0,0.
+   Model musi się zmieścić w kwadracie. Zapisz ten wymiar — to **szerokość znacznika**.
 
-Model jest skalowany o `1 / szerokoscZnacznika`, więc rzut modelu w AR pokrywa się z rysunkiem
-**przy każdym rozmiarze wydruku**. Rozmiar wydruku = skala makiety:
-znacznik 4,2 m wydrukowany na 42 cm → model w AR w skali 1:10.
+> Dlaczego to ważne: telefon dopasowuje model do znacznika właśnie według tego kwadratu.
+> Jeśli wymiar się nie zgadza, model w AR będzie za duży albo za mały.
 
-`srodekZnacznika: [X, Y]` — współrzędne środka obrazka w rzucie Rhino (domyślnie 0, 0).
-`obrot` — obrót modelu w planie, w stopniach (zwykle 0).
+## Krok 2. Przygotuj znacznik (`znacznik.png`)
 
-## Przygotowanie nowej pracy (Rhino)
+1. Widok **Top**, rzut **równoległy (Parallel)**. Nie używaj perspektywy.
+2. Zapisz obraz dokładnie z obszaru kwadratu z kroku 1, np. przez `ViewCaptureToFile`
+   po wcześniejszym `Zoom` → `Window` na kwadrat albo przez render obszaru.
+   Obraz ma być kwadratowy, ok. 2000 × 2000 px.
+3. Góra obrazka = oś Y w Rhino (północ rysunku). Nie obracaj obrazka.
 
-1. Model ustaw tak, by środek rzutu był w (0, 0) — albo wpisz inny środek w `srodekZnacznika`.
-2. Znacznik: widok **Top, rzut równoległy (Parallel)**, kadr kwadratowy o znanym wymiarze
-   (np. narysuj prostokąt 6 × 6 m wokół środka i wyrenderuj/wyeksportuj dokładnie ten obszar).
-   Ten wymiar wpisz jako `szerokoscZnacznika`.
-3. Eksport modelu: **File → Export → .glb** (metry). Pilnuj rozmiaru: telefon na wystawie
-   musi go pobrać — cel to poniżej ~15 MB.
-4. Utwórz folder `prace/<id>/`, wrzuć `model.glb` i `znacznik.png`.
-5. Otwórz `kompiluj.html`, wybierz `znacznik.png`, zapisz pobrany plik jako `prace/<id>/znacznik.mind`.
-6. Dopisz pracę w `prace.json`.
-7. Sprawdź na stronie *Kalibracja skali*: półprzezroczysty model musi dokładnie przykrywać rysunek.
+**Dobry znacznik ma dużo kontrastowych szczegółów na całej powierzchni:** linie, faktury,
+cienie, osie, opisy. Telefon śledzi właśnie te detale. Duże puste białe pola działają słabo —
+dodaj tło, siatkę, otoczenie lub tytuł pracy w wolnych miejscach kwadratu.
 
-Dobry znacznik = dużo kontrastowych detali (linie, faktury, napisy) na całej powierzchni.
-Duże puste białe pola słabo się śledzą — warto dodać ramkę, siatkę osi, opis pracy.
+## Krok 3. Wyeksportuj model (`model.glb`)
 
-## Publikacja na GitHub Pages (pierwszy raz)
+1. Zaznacz model (bez pomocniczego kwadratu) → `File` → `Export Selected` → format **.glb**.
+2. Sprawdź rozmiar pliku: **maks. 15 MB**. Telefon zwiedzającego pobiera go przez internet.
+   Jeśli plik jest większy:
+   - uprość siatki (`ReduceMesh`) albo zmniejsz gęstość siatki przy eksporcie,
+   - usuń niewidoczne elementy (wnętrza, śruby, detale niewidoczne z daleka),
+   - zmniejsz tekstury do 2048 px lub mniej.
+3. Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu z kroku 1.
 
-Model ma ~38 MB, a przez przeglądarkę GitHub przyjmuje pliki do 25 MB — dlatego najprościej
-użyć programu **GitHub Desktop** (limit 100 MB na plik).
+## Krok 4. Oddaj pracę
 
-1. Załóż konto na github.com i zainstaluj GitHub Desktop (desktop.github.com), zaloguj się.
-2. Skopiuj folder `wystawa-ar` w wygodne miejsce (np. na Pulpit, poza folder mind-ar-js).
-3. GitHub Desktop → **File → Add local repository** → wskaż folder `wystawa-ar`
-   → „create a repository” → **Create repository**.
-4. **Publish repository** → odznacz „Keep this code private” → Publish.
-5. Na github.com w repozytorium: **Settings → Pages → Source: Deploy from a branch →
-   Branch: main, folder: / (root) → Save**.
-6. Po 1–2 minutach strona działa pod adresem `https://<login>.github.io/wystawa-ar/`.
-7. Każda zmiana: GitHub Desktop → wpisz opis → **Commit to main** → **Push origin**.
+Wyślij folder (np. jako `.zip`) prowadzącemu. Twoja praca pojawi się na stronie wystawy.
 
-Kamera w telefonie działa tylko przez HTTPS — GitHub Pages to zapewnia.
-Kody QR na stronie głównej generują się z aktualnego adresu, więc drukuj je z wersji opublikowanej.
+## Krok 5. Sprawdź swoją pracę na stronie
 
-## Test lokalny
+1. Na stronie wystawy przy swojej pracy kliknij **Kalibracja skali** (na komputerze).
+   Półprzezroczysty model musi **dokładnie przykrywać rysunek** znacznika.
+   Przycisk **Perspektywa** pokazuje model z boku.
+2. Wydrukuj `znacznik.png`, otwórz stronę na telefonie, kliknij **Otwórz AR**,
+   zezwól na dostęp do aparatu i skieruj go na wydruk.
 
-Strony nie działają po dwukliku (file://) — potrzebny jest lokalny serwer, np. rozszerzenie
-„Live Server” w VS Code. Kamera lokalnie działa tylko na tym samym komputerze (localhost).
+Rozmiar wydruku nie zmienia dopasowania, tylko skalę makiety:
+znacznik 6 m wydrukowany na 30 cm daje model w skali 1:20.
+
+### Coś nie działa?
+
+| Problem | Przyczyna |
+|---|---|
+| Model za duży / za mały | Podana szerokość znacznika nie zgadza się z kwadratem z kroku 1 |
+| Model przesunięty | Środek kwadratu nie był w punkcie 0,0 albo obraz nie obejmował dokładnie kwadratu |
+| Model obrócony | Obraz wykonany w innym widoku niż Top albo obrócony po zapisaniu |
+| Model „pływa” / znika | Za mało szczegółów na znaczniku, słabe światło albo błyszczący papier |
+| Długo się wczytuje | Za duży `model.glb` |
+
+---
+
+## Dla prowadzącego: dodanie pracy na stronę
+
+1. Utwórz folder `prace/<nazwa>/` i wrzuć `model.glb` oraz `znacznik.png`.
+2. Otwórz `kompiluj.html` na stronie wystawy, wybierz `znacznik.png`
+   i zapisz pobrany plik jako `prace/<nazwa>/znacznik.mind`.
+3. Dopisz pracę w `prace.json`. `szerokoscZnacznika` to wymiar kwadratu w metrach.
+   `srodekZnacznika` i `obrot` zostaw jako `[0, 0]` i `0`.
+4. Wyślij zmiany:
+   ```
+   git add -A
+   git commit -m "Dodano prace <nazwa>"
+   git push
+   ```
+5. Po około minucie sprawdź **Kalibrację skali** dla nowej pracy.
