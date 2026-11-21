@@ -8,16 +8,18 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   <script>
     // MindAR prosi o kamerę bez rozdzielczości — przeglądarki dają wtedy 640×480 (rozmazany obraz).
-    // Prosimy o Full HD i ciągły autofokus. Wyższa rozdzielczość = ostrzejszy obraz, ale wolniejsze śledzenie —
-    // jeśli na słabszych telefonach model drga lub się spóźnia, wróć do 1280×720.
+    // Prosimy o HD i ciągły autofokus. MindAR analizuje każdą klatkę w pełnej rozdzielczości,
+    // więc Full HD spowalnia śledzenie — 1280×720 to kompromis. Do testów: ar.html?p=...&kamera=1080 (albo 480).
     // Przeglądarka pomija ustawienia, których telefon nie obsługuje.
     (() => {
       const md = navigator.mediaDevices;
       if (!md || !md.getUserMedia) return;
       const oryginal = md.getUserMedia.bind(md);
+      const wys = { '480': [640, 480], '720': [1280, 720], '1080': [1920, 1080] }[
+        new URLSearchParams(location.search).get('kamera') || '720'] || [1280, 720];
       md.getUserMedia = (c) => {
         if (c && c.video && typeof c.video === 'object') {
-          c = { ...c, video: { ...c.video, width: { ideal: 1920 }, height: { ideal: 1080 },
+          c = { ...c, video: { ...c.video, width: { ideal: wys[0] }, height: { ideal: wys[1] },
                                advanced: [{ focusMode: 'continuous' }] } };
         }
         return oryginal(c);
@@ -45,8 +47,15 @@
       document.title = `${praca.tytul} — AR`;
       info.innerHTML = `<b>${praca.tytul}</b> · ${praca.autor}<br>Skieruj aparat na znacznik. <a href="./">Wszystkie prace</a>`;
 
+      // Wygładzanie ruchu (OneEuroFilter). Domyślne wartości MindAR: cf 0.001, beta 1000.
+      // Mniejsze cf = mniej drgań; większa beta = mniejsze opóźnienie przy szybkim ruchu.
+      // Do testów na telefonie bez zmian w plikach: ar.html?p=...&cf=0.0005&beta=500
+      const q = new URLSearchParams(location.search);
+      const cf = parseFloat(q.get('cf')) || 0.001;
+      const beta = parseFloat(q.get('beta')) || 1000;
+
       document.body.insertAdjacentHTML('beforeend', `
-        <a-scene mindar-image="imageTargetSrc: ${praca.mind}; filterMinCF: 0.0001; filterBeta: 0.001; missTolerance: 5; warmupTolerance: 5"
+        <a-scene mindar-image="imageTargetSrc: ${praca.mind}; filterMinCF: ${cf}; filterBeta: ${beta}; missTolerance: 5; warmupTolerance: 5"
                  renderer="colorManagement: true; antialias: true"
                  color-space="sRGB" vr-mode-ui="enabled: false"
                  device-orientation-permission-ui="enabled: false"

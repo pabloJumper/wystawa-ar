@@ -79,6 +79,18 @@ krzyżujących się linii, faktur. Duże puste białe pola nie dają mu nic do �
 Kolor jest dozwolony, ale liczy się **różnica jasności**: dwa kolory o podobnej jasności
 telefon widzi jako jedną plamę.
 
+**Najważniejsza zasada: rysunek musi być czytelny po zmniejszeniu do 128 px.**
+Podczas śledzenia telefon porównuje obraz z kamery ze znacznikiem zmniejszonym do 128 × 128 px.
+Przy kwadracie 60 m jeden taki piksel to prawie **0,5 m** — cienkie linie rzutu (osie, obrysy mebli,
+kreskowanie) w tej skali znikają. Dlatego:
+
+- ściany **zaczerniaj**, nie rysuj samym obrysem,
+- stosuj **duże, kontrastowe plamy**: zieleń, nawierzchnie, cienie, ciemne i jasne pomieszczenia,
+- drobny detal (meble, posadzki) pomaga w **rozpoznaniu** znacznika, ale do **śledzenia** potrzebne są duże kształty.
+
+Kompilator pokazuje podgląd **„Co widzi tracker”** — jeśli tam rysunek jest rozmyty i ma mało
+czerwonych punktów, model będzie drgał lub znikał.
+
 ### Zapis do pliku `znacznik.png`
 
 Plik musi obejmować **dokładnie kwadrat** — ani milimetra więcej, ani mniej:
@@ -150,7 +162,8 @@ Po dodaniu pracy przez prowadzącego:
 | Model za duży / za mały | Podana szerokość znacznika nie zgadza się z bokiem kwadratu albo plik nie obejmuje dokładnie kwadratu |
 | Model przesunięty | Środek kwadratu nie był w punkcie 0,0 albo rzut przesunięto względem modelu |
 | Model obrócony | Rzut obrócony względem modelu albo obraz obrócony po zapisaniu |
-| Model „pływa” / znika | Za mało detalu na rzucie (ocena „słaby”), słabe światło, błyszczący papier, pofalowana kartka |
+| Model „pływa” / znika | Za mało detalu na rzucie (ocena „słaby”), za cienkie linie (patrz „Co widzi tracker”), słabe światło, błyszczący papier, pofalowana kartka |
+| Rozpoznaje się tylko z bliska | Wydruk za mały — znacznik powinien mieć **min. 20 cm** boku (do testów można drukować w dowolnej skali, AR i tak pasuje do rysunku) |
 | Telefon nie rozpoznaje wydruku | Wydruk różni się od `znacznik.png` (inny kadr, dorysowane elementy, inne kolory) |
 | Długo się wczytuje | Za duży `model.glb` |
 
@@ -170,3 +183,15 @@ Po dodaniu pracy przez prowadzącego:
    git push
    ```
 5. Po około minucie sprawdź **Kalibrację skali** dla nowej pracy.
+
+### Strojenie AR na telefonie (bez zmian w plikach)
+
+Do adresu `ar.html?p=<nazwa>` można dopisać parametry:
+
+| Parametr | Domyślnie | Działanie |
+|---|---|---|
+| `&kamera=480` / `720` / `1080` | 720 | rozdzielczość kamery — wyższa ostrzejsza, ale wolniejsze śledzenie |
+| `&cf=0.0005` | 0.001 | mniejsza wartość = mniej drgań modelu |
+| `&beta=500` | 1000 | większa wartość = mniejsze opóźnienie przy szybkim ruchu |
+
+Np. `ar.html?p=tygrys&kamera=480&cf=0.0005`. Gdy znajdziesz najlepsze ustawienia, można je wpisać na stałe.
