@@ -15,6 +15,8 @@
      wrzuć go do folderu pracy, obok <code>znacznik.png</code>.</p>
   <input type="file" id="plik" accept="image/*">
   <p id="postep"></p>
+  <p id="wynik"></p>
+  <canvas id="podglad" style="max-width:100%"></canvas>
   <p><a href="./">← wszystkie prace</a></p>
 
   <script type="module">
@@ -26,10 +28,39 @@
       img.src = src;
       await img.decode();
       const compiler = new Compiler();
-      await compiler.compileImageTargets([img], onProgress);
+      const lista = await compiler.compileImageTargets([img], onProgress);
+      window.ostatniRaport = raport(lista[0]);
+      pokaz(img, lista[0]);
       return compiler.exportData();
     }
     window.kompiluj = kompiluj;
+
+    // Liczba punktów: do rozpoznania znacznika (dopasowanie) i do śledzenia ruchu
+    function raport(d) {
+      const dopasowanie = d.matchingData.reduce((s, m) => s + m.maximaPoints.length + m.minimaPoints.length, 0);
+      const sledzenie = d.trackingData.reduce((s, t) => s + t.points.length, 0);
+      // progi z porównania: tygrys na białym tle 1637/32 (średni), z tłem planu 5498/82 (dobry)
+      const ocena = dopasowanie > 3000 && sledzenie > 60 ? 'dobry' : dopasowanie > 1200 && sledzenie > 30 ? 'średni' : 'słaby';
+      return { dopasowanie, sledzenie, ocena };
+    }
+
+    // Podgląd: obrazek w szarości + zielone punkty z największej skali
+    function pokaz(img, d) {
+      const r = window.ostatniRaport;
+      const c = document.getElementById('podglad');
+      const W = Math.min(img.naturalWidth, 1000), s = W / img.naturalWidth;
+      c.width = W; c.height = Math.round(img.naturalHeight * s);
+      const g = c.getContext('2d');
+      g.filter = 'grayscale(1) opacity(0.6)'; g.drawImage(img, 0, 0, c.width, c.height); g.filter = 'none';
+      const m = d.matchingData[0], sk = d.imageList[0].scale;
+      g.fillStyle = '#00c040';
+      for (const p of [...m.maximaPoints, ...m.minimaPoints]) {
+        g.beginPath(); g.arc(p.x / sk * s, p.y / sk * s, 4, 0, Math.PI * 2); g.fill();
+      }
+      document.getElementById('wynik').innerHTML =
+        `Ocena znacznika: <b>${r.ocena}</b> — punkty rozpoznawania: ${r.dopasowanie}, punkty śledzenia: ${r.sledzenie}. ` +
+        `Zielone kropki pokazują miejsca, które telefon rozpoznaje. Obszary bez kropek warto wypełnić detalem.`;
+    }
 
     const postep = document.getElementById('postep');
 
@@ -40,6 +71,7 @@
       const dane = await kompiluj(auto, (p) => postep.textContent = `Kompilacja ${auto}: ${p.toFixed(0)}%`);
       const cel = auto.replace(/\.[^.]+$/, '.mind');
       const r = await fetch(cel, { method: 'PUT', body: dane });
+      await fetch(auto.replace(/\.[^.]+$/, '.raport.json'), { method: 'PUT', body: JSON.stringify(window.ostatniRaport) });
       postep.textContent = r.ok ? `Zapisano ${cel} (${dane.byteLength} B). Możesz zamknąć kartę.` : 'Błąd zapisu: ' + r.status;
     }
     document.getElementById('plik').onchange = async (e) => {
