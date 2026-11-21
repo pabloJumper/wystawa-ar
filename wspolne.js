@@ -46,6 +46,10 @@ export function htmlModelu(praca, extra = '') {
     </a-entity>`;
 }
 
+// Dekoder Draco — pozwala wczytać modele .glb skompresowane przy eksporcie (np. Rhino 8 → glTF → Draco).
+// Zwykłe, nieskompresowane modele działają bez zmian.
+export const DEKODERY = 'gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/versioned/decoders/1.5.6/"';
+
 export const SWIATLA = `
   <a-entity light="type: hemisphere; color: #ffffff; groundColor: #8a7f70; intensity: 1.2"></a-entity>
   <a-entity light="type: directional; intensity: 1.6" position="0.6 -0.8 1.5"></a-entity>`;

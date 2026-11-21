@@ -95,11 +95,29 @@ Oddaj znacznik z oceną **dobry**. Obszary bez kropek dopracuj detalem.
 ## Krok 3. Model (`model.glb`)
 
 1. Zaznacz model budynku (bez kwadratu i rysunku rzutu) → `File` → `Export Selected` → **.glb**.
-2. **Maks. 15 MB** — telefon zwiedzającego pobiera plik przez internet. Jeśli jest większy:
-   - uprość siatki (`ReduceMesh`) albo zmniejsz gęstość siatki przy eksporcie,
-   - usuń elementy niewidoczne z zewnątrz (wnętrza, instalacje, drobne detale),
-   - zmniejsz tekstury do 2048 px lub mniej.
-3. Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu.
+2. W opcjach eksportu włącz **kompresję Draco** (Rhino 8) — plik będzie 5–10 razy mniejszy.
+3. **Maks. 15 MB** — telefon zwiedzającego pobiera plik przez internet.
+   Celuj w **do 150 tys. trójkątów** na cały budynek (sprawdzisz poleceniem `PolygonCount`).
+
+### Jak zmniejszyć model
+
+- **Siatkowanie przy eksporcie** (Detailed Controls): *Simple planes* włączone,
+  *Maximum angle* 15–20°, *Density* 0, *Refine mesh* wyłączone.
+  Płaskie ściany są tanie; drogie są krzywizny — walce, zaokrąglenia, okrągłe słupy.
+- **Usuń, czego nie widać z zewnątrz:** wnętrza, instalacje, elementy schowane w ścianach,
+  śruby i okucia. Okno = szyba + prosta rama.
+- **Drzewa i ludzi rysuj na rzucie, nie w modelu** — to najwięksi „zjadacze” trójkątów.
+- Gotowe siatki zmniejszysz poleceniem `ReduceMesh`.
+- **Materiały jednolite (sam kolor)** nie zajmują prawie nic. Jeśli musisz mieć tekstury:
+  **JPG, maks. 2048 px**. Jedna tekstura PNG 4096 px potrafi ważyć więcej niż cały budynek.
+
+| Model | Trójkąty | Rozmiar bez Draco | Z Draco |
+|---|---|---|---|
+| Bryła, prosta forma | 5–30 tys. | < 2 MB | < 0,5 MB |
+| Budynek z otworami, schodami | 50–150 tys. | 3–10 MB | 0,5–2 MB |
+| Górna granica | ~200 tys. | ~15 MB | ~2–3 MB |
+
+Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu.
 
 ## Krok 4. Wydruk w skali 1:200
 

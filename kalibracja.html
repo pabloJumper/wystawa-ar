@@ -37,7 +37,7 @@
     });
   </script>
   <script type="module">
-    import { wczytajPrace, znajdzPrace, htmlModelu, transformacjaModelu, SWIATLA } from './wspolne.js';
+    import { wczytajPrace, znajdzPrace, htmlModelu, transformacjaModelu, SWIATLA, DEKODERY } from './wspolne.js';
 
     const dane = await wczytajPrace();
     const praca = znajdzPrace(dane, new URLSearchParams(location.search).get('p'));
@@ -53,7 +53,7 @@
 
     document.body.insertAdjacentHTML('beforeend', `
       <a-scene renderer="colorManagement: true; antialias: true" vr-mode-ui="enabled: false" light="defaultLightsEnabled: false"
-               background="color: #e9e7e2">
+               background="color: #e9e7e2" ${DEKODERY}>
         <a-assets><img id="znacznik" src="${praca.znacznik}"></a-assets>
         <a-entity id="kamera" camera position="0 0 1.6" look-controls="enabled: false" wasd-controls="enabled: false"></a-entity>
         ${SWIATLA}
