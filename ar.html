@@ -16,6 +16,7 @@
       window.AR = {
         kamera: liczba('kamera'), autofokus: u.autofokus, cf: liczba('cf'), beta: liczba('beta'),
         klatkiDoPokazania: u.klatkiDoPokazania, klatkiDoUkrycia: u.klatkiDoUkrycia,
+        slonceKierunek: u.slonceKierunek, slonceJasnosc: u.slonceJasnosc, swiatloOtoczenia: u.swiatloOtoczenia,
       };
     })();
 
@@ -47,7 +48,7 @@
 <body>
   <div id="info">Ładowanie…</div>
   <script type="module">
-    import { wczytajPrace, znajdzPrace, htmlModelu, SWIATLA, DEKODERY } from './wspolne.js';
+    import { wczytajPrace, znajdzPrace, htmlModelu, DEKODERY } from './wspolne.js';
 
     const info = document.getElementById('info');
     try {
@@ -66,8 +67,10 @@
                  device-orientation-permission-ui="enabled: false"
                  light="defaultLightsEnabled: false" ${DEKODERY}>
           <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+          <!-- Światła poza znacznikiem: stałe względem telefonu, model obraca się pod nimi razem z kartką -->
+          <a-entity light="type: ambient; intensity: ${ar.swiatloOtoczenia}"></a-entity>
+          <a-entity light="type: directional; intensity: ${ar.slonceJasnosc}" position="${ar.slonceKierunek.join(' ')}"></a-entity>
           <a-entity mindar-image-target="targetIndex: 0">
-            ${SWIATLA}
             ${htmlModelu(praca)}
           </a-entity>
         </a-scene>`);

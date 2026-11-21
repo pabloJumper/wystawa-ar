@@ -37,4 +37,19 @@ window.USTAWIENIA_AR = {
   //   Większa wartość = model nie miga przy chwilowej utracie znacznika.
   //   Domyślnie w MindAR: 5
   klatkiDoUkrycia: 5,
+
+  // ---------- OŚWIETLENIE MODELU ----------
+  // Słońce jest związane z telefonem (jak lampa nad ramieniem oglądającego):
+  // obracając kartkę, obracasz model pod światłem.
+  // Kierunek, Z KTÓREGO świeci słońce, patrząc przez telefon:
+  //   x: + w prawo, − w lewo   y: + z góry, − z dołu   z: + zza pleców, − zza modelu
+  //   Przykłady: [-1, 1.5, 1] z góry i z lewej,  [1, 1, 0.5] z prawej,  [0, 1, 0] z samej góry
+  slonceKierunek: [-1, 1.5, 1],
+
+  // Jasność słońca. Większa = mocniejszy kontrast jasnych i ciemnych ścian.
+  slonceJasnosc: 1.6,
+
+  // Światło otoczenia (równe ze wszystkich stron) — rozjaśnia strony w cieniu.
+  //   0 = czarne cienie, 1 = prawie bez cieni
+  swiatloOtoczenia: 0.7,
 };
