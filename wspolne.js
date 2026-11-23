@@ -1,4 +1,4 @@
-// Wspólne funkcje dla ar.html i kalibracja.html
+// Wspólne funkcje dla ar.html i podglad.html
 
 export async function wczytajPrace() {
   const r = await fetch('prace.json', { cache: 'no-cache' });

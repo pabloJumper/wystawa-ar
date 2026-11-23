@@ -149,9 +149,10 @@ Nie przesuwaj ani nie skaluj modelu po narysowaniu kwadratu.
 
 Po dodaniu pracy przez prowadzącego:
 
-1. Na stronie wystawy przy swojej pracy kliknij **Kalibracja skali** (na komputerze).
-   Półprzezroczysty model musi **dokładnie przykrywać ściany na rzucie**.
-   Przycisk **Perspektywa** pokazuje model z boku.
+1. Na stronie wystawy przy swojej pracy kliknij **Podgląd 3D** — model stoi na swoim rzucie
+   i można go obracać (przeciąganie) i przybliżać (kółko myszy lub dwa palce).
+   Sprawdź skalę: kliknij **Z góry** i zaznacz **przezroczysty** — model musi
+   **dokładnie przykrywać ściany na rzucie**.
 2. Otwórz stronę na telefonie, kliknij **Otwórz AR**, zezwól na dostęp do aparatu
    i skieruj go na wydruk z odległości ok. 30–60 cm.
 
@@ -182,7 +183,7 @@ Po dodaniu pracy przez prowadzącego:
    git commit -m "Dodano prace <nazwa>"
    git push
    ```
-5. Po około minucie sprawdź **Kalibrację skali** dla nowej pracy.
+5. Po około minucie otwórz **Podgląd 3D** nowej pracy i sprawdź skalę (**Z góry** + **przezroczysty**).
 
 ### Strojenie AR na telefonie (bez zmian w plikach)
 
